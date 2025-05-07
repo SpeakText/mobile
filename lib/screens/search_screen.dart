@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/book_provider.dart';
+import '../core/widgets/search_result_grid.dart';
+import '../core/widgets/custom_bottom_nav_bar.dart';
 
 class SearchScreen extends ConsumerStatefulWidget {
   final String? initialQuery;
@@ -30,111 +32,86 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
     super.dispose();
   }
 
+  void _onNavTap(int index) {
+    // TODO: 각 인덱스에 맞는 화면으로 이동 구현
+    // 예시: if (index == 0) Navigator.pushReplacement(...)
+  }
+
   @override
   Widget build(BuildContext context) {
     final allBooksAsync = ref.watch(allBooksProvider);
 
     return Scaffold(
       appBar: AppBar(
-        title: TextField(
-          controller: _searchController,
-          decoration: InputDecoration(
-            hintText: '책 제목, 저자를 검색하세요',
-            border: InputBorder.none,
-            hintStyle: TextStyle(color: Colors.grey[400]),
+        title: const Text('검색', style: TextStyle(fontWeight: FontWeight.bold)),
+        centerTitle: true,
+        backgroundColor: Colors.white,
+        elevation: 1,
+      ),
+      body: Column(
+        children: [
+          Container(
+            color: Colors.grey[100],
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            child: TextField(
+              controller: _searchController,
+              decoration: InputDecoration(
+                hintText: '책 제목, 저자를 검색하세요',
+                prefixIcon: const Icon(Icons.search, color: Colors.blueAccent),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(30),
+                  borderSide: BorderSide.none,
+                ),
+                filled: true,
+                fillColor: Colors.white,
+                contentPadding: const EdgeInsets.symmetric(
+                  vertical: 0,
+                  horizontal: 0,
+                ),
+              ),
+              onChanged: (value) {
+                setState(() {
+                  _searchQuery = value;
+                });
+              },
+            ),
           ),
-          onChanged: (value) {
-            setState(() {
-              _searchQuery = value;
-            });
-          },
-        ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.clear),
-            onPressed: () {
-              _searchController.clear();
-              setState(() {
-                _searchQuery = '';
-              });
-            },
-          ),
+          if (_searchQuery.isEmpty)
+            Expanded(
+              child: Center(
+                child: Text(
+                  '검색어를 입력해 주세요',
+                  style: TextStyle(fontSize: 16, color: Colors.grey[500]),
+                ),
+              ),
+            )
+          else
+            Expanded(
+              child: allBooksAsync.when(
+                loading: () => const Center(child: CircularProgressIndicator()),
+                error:
+                    (error, stackTrace) => Center(child: Text('에러 발생: $error')),
+                data: (books) {
+                  final filteredBooks =
+                      books.where((book) {
+                        final searchLower = _searchQuery.toLowerCase();
+                        return book.title.toLowerCase().contains(searchLower) ||
+                            book.authorId.toString().contains(searchLower);
+                      }).toList();
+                  return SearchResultGrid(
+                    books: filteredBooks,
+                    onBookTap: () {
+                      // TODO: 책 상세 페이지로 이동
+                    },
+                  );
+                },
+              ),
+            ),
         ],
       ),
-      body: allBooksAsync.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, stackTrace) => Center(child: Text('에러 발생: $error')),
-        data: (books) {
-          final filteredBooks =
-              books.where((book) {
-                final searchLower = _searchQuery.toLowerCase();
-                return book.title.toLowerCase().contains(searchLower) ||
-                    book.authorId.toString().contains(searchLower);
-              }).toList();
-
-          if (filteredBooks.isEmpty) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.search_off, size: 64, color: Colors.grey[400]),
-                  const SizedBox(height: 16),
-                  Text(
-                    '검색 결과가 없습니다',
-                    style: TextStyle(fontSize: 16, color: Colors.grey[600]),
-                  ),
-                ],
-              ),
-            );
-          }
-
-          return GridView.builder(
-            padding: const EdgeInsets.all(16),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              childAspectRatio: 0.7,
-              crossAxisSpacing: 16,
-              mainAxisSpacing: 16,
-            ),
-            itemCount: filteredBooks.length,
-            itemBuilder: (context, index) {
-              final book = filteredBooks[index];
-              return Column(
-                children: [
-                  Expanded(
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(8),
-                      child: Image.network(
-                        book.coverUrl,
-                        fit: BoxFit.cover,
-                        errorBuilder:
-                            (context, error, stackTrace) => Container(
-                              color: Colors.grey[200],
-                              child: const Icon(
-                                Icons.menu_book,
-                                color: Colors.blueAccent,
-                                size: 40,
-                              ),
-                            ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    book.title,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 14,
-                    ),
-                    textAlign: TextAlign.center,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ],
-              );
-            },
-          );
-        },
+      bottomNavigationBar: CustomBottomNavBar(
+        currentIndex: 1, // 검색이 두 번째 탭이라고 가정
+        onTap: _onNavTap,
       ),
     );
   }

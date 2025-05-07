@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/book_provider.dart';
 import '../models/book.dart';
+import '../core/widgets/book_card.dart';
+import '../core/widgets/custom_bottom_nav_bar.dart';
 import 'search_screen.dart';
 
 class HomeScreen extends ConsumerWidget {
@@ -85,20 +87,10 @@ class HomeScreen extends ConsumerWidget {
           _SectionAsync(title: '전체 오디오북', booksAsync: allBooksAsync),
         ],
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: '홈'),
-          BottomNavigationBarItem(icon: Icon(Icons.favorite), label: '즐겨찾기'),
-          BottomNavigationBarItem(icon: Icon(Icons.download), label: '다운로드'),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: '내 정보'),
-        ],
+      bottomNavigationBar: CustomBottomNavBar(
         currentIndex: 0,
-        backgroundColor: _topBgColor,
-        selectedItemColor: Colors.brown,
-        unselectedItemColor: Colors.brown.withOpacity(0.5),
-        type: BottomNavigationBarType.fixed,
         onTap: (index) {
-          // TODO: 라우팅 연결 예정
+          // TODO: 라우팅 연결 예정 또는 탭별 기능 구현
         },
       ),
       backgroundColor: Colors.grey[50],
@@ -168,61 +160,8 @@ class _Section extends StatelessWidget {
             separatorBuilder: (_, __) => const SizedBox(width: 16),
             itemBuilder: (context, index) {
               final book = books[index];
-              return _BookCard(title: book.title, imageUrl: book.coverUrl);
+              return BookCard(title: book.title, imageUrl: book.coverUrl);
             },
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _BookCard extends StatelessWidget {
-  final String title;
-  final String imageUrl;
-  const _BookCard({required this.title, required this.imageUrl});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Material(
-          elevation: 4,
-          borderRadius: BorderRadius.circular(20),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(20),
-            child: Image.network(
-              imageUrl,
-              width: 130,
-              height: 180,
-              fit: BoxFit.cover,
-              errorBuilder:
-                  (context, error, stackTrace) => Container(
-                    width: 130,
-                    height: 180,
-                    color: Colors.grey[200],
-                    child: const Icon(
-                      Icons.menu_book,
-                      color: Colors.blueAccent,
-                      size: 36,
-                    ),
-                  ),
-            ),
-          ),
-        ),
-        const SizedBox(height: 8),
-        SizedBox(
-          width: 130,
-          child: Text(
-            title,
-            textAlign: TextAlign.center,
-            style: const TextStyle(
-              fontSize: 15,
-              fontWeight: FontWeight.w600,
-              color: Colors.black,
-            ),
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
           ),
         ),
       ],
