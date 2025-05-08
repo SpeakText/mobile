@@ -8,13 +8,3 @@ final allBooksProvider = FutureProvider<List<Book>>((ref) async {
   final service = ref.read(bookServiceProvider);
   return service.fetchAllBooks();
 });
-
-final recentBooksProvider = FutureProvider<List<Book>>((ref) async {
-  final service = ref.read(bookServiceProvider);
-  return service.fetchRecentBooks();
-});
-
-final popularBooksProvider = FutureProvider<List<Book>>((ref) async {
-  final service = ref.read(bookServiceProvider);
-  return service.fetchPopularBooks();
-});

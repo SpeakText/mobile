@@ -1,25 +1,41 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'screens/home_screen.dart';
+import 'screens/auth/login_screen.dart';
+import 'providers/auth_provider.dart';
 
-// ... existing code ...
 void main() {
   runApp(const ProviderScope(child: MyApp()));
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends ConsumerWidget {
   const MyApp({super.key});
 
+  static const Color _primaryColor = Color(0xFFF8ECD1); // 밝은 베이지색
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isLoggedIn = ref.watch(authProvider);
+
     return MaterialApp(
       title: '글을 말하다',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primaryColor: _primaryColor,
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: _primaryColor,
+          primary: _primaryColor,
+          secondary: const Color(0xFFDEB6AB), // 보조 색상으로 어두운 베이지색
+        ),
         scaffoldBackgroundColor: Colors.white,
         useMaterial3: true,
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: _primaryColor,
+            foregroundColor: Colors.black87,
+          ),
+        ),
       ),
-      home: const HomeScreen(),
+      home: isLoggedIn ? const HomeScreen() : const LoginScreen(),
       debugShowCheckedModeBanner: false,
     );
   }
