@@ -38,17 +38,16 @@ class BookCard extends StatelessWidget {
                 width: width,
                 height: height,
                 fit: BoxFit.cover,
-                errorBuilder:
-                    (context, error, stackTrace) => Container(
-                      width: width,
-                      height: height,
-                      color: Colors.grey[200],
-                      child: const Icon(
-                        Icons.menu_book,
-                        color: Colors.blueAccent,
-                        size: 36,
-                      ),
-                    ),
+                errorBuilder: (context, error, stackTrace) => Container(
+                  width: width,
+                  height: height,
+                  color: Colors.grey[200],
+                  child: const Icon(
+                    Icons.menu_book,
+                    color: Colors.blueAccent,
+                    size: 36,
+                  ),
+                ),
               ),
             ),
           ),

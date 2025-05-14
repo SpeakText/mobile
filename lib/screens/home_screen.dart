@@ -5,6 +5,7 @@ import '../providers/auth_provider.dart';
 import '../core/widgets/book_card.dart';
 import '../core/widgets/custom_bottom_nav_bar.dart';
 import 'search_screen.dart';
+import 'book_detail_screen.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -99,7 +100,18 @@ class HomeScreen extends ConsumerWidget {
           itemCount: books.length,
           itemBuilder: (context, index) {
             final book = books[index];
-            return BookCard(title: book.title, imageUrl: book.coverUrl);
+            return BookCard(
+              title: book.title,
+              imageUrl: book.coverUrl,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => BookDetailScreen(book: book),
+                  ),
+                );
+              },
+            );
           },
         ),
       ),

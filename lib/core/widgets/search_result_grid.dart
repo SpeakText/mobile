@@ -4,7 +4,7 @@ import 'book_card.dart';
 
 class SearchResultGrid extends StatelessWidget {
   final List<Book> books;
-  final VoidCallback? onBookTap;
+  final void Function(Book)? onBookTap;
 
   const SearchResultGrid({super.key, required this.books, this.onBookTap});
 
@@ -40,7 +40,7 @@ class SearchResultGrid extends StatelessWidget {
         return BookCard(
           title: book.title,
           imageUrl: book.coverUrl,
-          onTap: onBookTap,
+          onTap: onBookTap != null ? () => onBookTap!(book) : null,
         );
       },
     );

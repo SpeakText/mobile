@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/book_provider.dart';
 import '../core/widgets/search_result_grid.dart';
 import '../core/widgets/custom_bottom_nav_bar.dart';
+import 'book_detail_screen.dart';
 
 class SearchScreen extends ConsumerStatefulWidget {
   final String? initialQuery;
@@ -89,19 +90,23 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
             Expanded(
               child: allBooksAsync.when(
                 loading: () => const Center(child: CircularProgressIndicator()),
-                error:
-                    (error, stackTrace) => Center(child: Text('에러 발생: $error')),
+                error: (error, stackTrace) =>
+                    Center(child: Text('에러 발생: $error')),
                 data: (books) {
-                  final filteredBooks =
-                      books.where((book) {
-                        final searchLower = _searchQuery.toLowerCase();
-                        return book.title.toLowerCase().contains(searchLower) ||
-                            book.authorId.toString().contains(searchLower);
-                      }).toList();
+                  final filteredBooks = books.where((book) {
+                    final searchLower = _searchQuery.toLowerCase();
+                    return book.title.toLowerCase().contains(searchLower) ||
+                        book.authorId.toString().contains(searchLower);
+                  }).toList();
                   return SearchResultGrid(
                     books: filteredBooks,
-                    onBookTap: () {
-                      // TODO: 책 상세 페이지로 이동
+                    onBookTap: (book) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => BookDetailScreen(book: book),
+                        ),
+                      );
                     },
                   );
                 },
