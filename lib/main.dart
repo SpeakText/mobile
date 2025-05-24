@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'screens/home_screen.dart';
-import 'screens/auth/login_screen.dart';
-import 'providers/auth_provider.dart';
 
 void main() {
   runApp(const ProviderScope(child: MyApp()));
@@ -15,8 +13,6 @@ class MyApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final isLoggedIn = ref.watch(authProvider);
-
     return MaterialApp(
       title: '글을 말하다',
       theme: ThemeData(
@@ -35,7 +31,7 @@ class MyApp extends ConsumerWidget {
           ),
         ),
       ),
-      home: isLoggedIn ? const HomeScreen() : const LoginScreen(),
+      home: const HomeScreen(),
       debugShowCheckedModeBanner: false,
     );
   }

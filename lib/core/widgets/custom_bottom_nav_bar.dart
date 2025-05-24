@@ -15,8 +15,9 @@ class CustomBottomNavBar extends StatelessWidget {
     return BottomNavigationBar(
       items: const [
         BottomNavigationBarItem(icon: Icon(Icons.home), label: '홈'),
-        BottomNavigationBarItem(icon: Icon(Icons.favorite), label: '즐겨찾기'),
-        BottomNavigationBarItem(icon: Icon(Icons.download), label: '다운로드'),
+        BottomNavigationBarItem(icon: Icon(Icons.search), label: '검색'),
+        BottomNavigationBarItem(
+            icon: Icon(Icons.library_books), label: '라이브러리'),
         BottomNavigationBarItem(icon: Icon(Icons.person), label: '내 정보'),
       ],
       currentIndex: currentIndex,
